@@ -1,0 +1,2 @@
+open index.html
+enjoy!
