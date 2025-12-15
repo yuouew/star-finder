@@ -1,10 +1,9 @@
 @font-face {
     font-family: myFont;
-    /* set name */
     src: url(../images/Stars-Regular.ttf);
-    /* url of the font */
 }
 
+/* for cloud buttons */
 .cloud-button {
     z-index: 4;
     width: 350px;
@@ -42,6 +41,7 @@ Retrieved 2025-12-15, License - CC BY-SA 4.0
     }
 }
 
+/* for star buttons */
 .star-button {
     z-index: 3;
     width: 100px;
@@ -56,6 +56,7 @@ Retrieved 2025-12-15, License - CC BY-SA 4.0
     transform-origin: center;
 }
 
+/* stars ans clouds are the small fluffs */
 .stars {
     z-index: 1;
     width: 30px;
@@ -74,21 +75,16 @@ Retrieved 2025-12-15, License - CC BY-SA 4.0
     position: absolute;
 }
 
+/* came with overlap script */
 .r2d2 {
     position: absolute;
-    /* width: 500px; */
-    /* height: auto; */
-    /* z-index: 2; */
 }
 
-/* .background {
-    margin-top: 1000px;
-} */
-
-html{
+/* unfortunately this doenst work sometimes, idk why */
+html {
     overflow: hidden;
-
 }
+
 body {
     overflow: hidden;
     height: 100%;
@@ -96,6 +92,7 @@ body {
     margin: 0;
 }
 
+/* regular text */
 .text {
     position: fixed;
     inset: 0;
@@ -116,20 +113,26 @@ body {
     -webkit-text-stroke: 1px white;
 }
 
-.blue{
+/* highlights */
+.blue {
     -webkit-text-stroke: 1px #63b4ff;
 }
-.purple{
+
+.purple {
     -webkit-text-stroke: 1px #ff6be1;
 }
-.green{
+
+.green {
     -webkit-text-stroke: 1px #a9ff6f;
 }
-.yellow{
+
+.yellow {
     -webkit-text-stroke: 1px #ffdf41;
 }
 
-.end-text-1, .end-text-2 {
+/* text at last page */
+.end-text-1,
+.end-text-2 {
     pointer-events: none;
     position: fixed;
     top: 0;
@@ -150,27 +153,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; 
+    height: 100vh;
     width: 100vw;
     box-sizing: border-box;
 }
 
 .end-text-1 {
-    /* margin: 0 0 0 100px; */
-    /* padding-left: 5%; */
     text-align: left;
-
     position: absolute;
     bottom: 75%;
     left: 5%;
 }
 
 .end-text-2 {
-    /* margin: 0 100px 0 0px; */
-    /* padding-right: 5%; */
-    /* padding-bottom: 15%; */
     text-align: right;
-
     position: absolute;
     top: 75%;
     right: 5%;
@@ -178,7 +174,6 @@ body {
 
 .end-image img {
     z-index: 8;
-
     max-width: 60%;
     height: auto;
     display: block;
@@ -186,12 +181,9 @@ body {
     transform: translateY(-3%);
 }
 
-
+/* background images*/
 .bg1 {
     background-image: url("../images/night1.jpeg");
-
-    /* height: max-content; */
-
     background-position: initial;
     background-repeat: repeat-x;
     background-repeat: repeat-y;
@@ -200,9 +192,6 @@ body {
 
 .bg2 {
     background-image: url("../images/night2.jpeg");
-
-    height: 100%;
-
     background-position: initial;
     background-repeat: repeat-x;
     background-repeat: repeat-y;
@@ -211,11 +200,6 @@ body {
 
 .bg3 {
     background-image: url("../images/night3.jpeg");
-
-    /* height: 100%;
-    width: 100%; */
-
-    /* background-position: top left; */
     background-repeat: repeat-x;
     background-repeat: repeat-y;
     background-size: cover;
@@ -223,16 +207,8 @@ body {
 
 .bg4 {
     background-image: url("../images/night4.jpeg");
-
-    height: 100%;
-
     background-position: initial;
     background-repeat: repeat-x;
     background-repeat: repeat-y;
     background-size: cover;
 }
-
-/* .images{
-    z-index: 8;
-    position: absolute;
-} */
