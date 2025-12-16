@@ -58,7 +58,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // spawns "goal" images until two are spawned, spawns clouds until hitting relative max, spawns fluff until relative max
 
     // wont do anything if on fourth (last) page
-    if (window.location.href.endsWith('page-4.html')) return;
+    // if (window.location.href.endsWith('page-4.html')) return;
 
     // list of image positions
     const imgPoss = [];
@@ -75,154 +75,236 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // mini star and cloud assets
     const imgs = [
-        { src: '../images/star1.png', width: 15, height: 15 },
-        { src: '../images/star2.png', width: 15, height: 15 },
-        { src: '../images/star3.png', width: 15, height: 15 },
-        { src: '../images/star4.png', width: 15, height: 15 },
-        { src: '../images/star5.png', width: 15, height: 15 },
-        { src: '../images/star6.png', width: 15, height: 15 },
-        { src: '../images/cloud1.png', width: 12, height: 12 },
-        { src: '../images/cloud2.png', width: 10, height: 12 },
+        { src: '../images/star1.png', width: 20, height: 20, class: "stars" },
+        { src: '../images/star2.png', width: 20, height: 20, class: "stars" },
+        { src: '../images/star3.png', width: 20, height: 20, class: "stars" },
+        { src: '../images/star4.png', width: 20, height: 20, class: "stars" },
+        { src: '../images/star5.png', width: 20, height: 20, class: "stars" },
+        { src: '../images/star6.png', width: 20, height: 20, class: "stars" },
+        { src: '../images/cloud1.png', width: 15, height: 15, class: "clouds" },
+        { src: '../images/cloud2.png', width: 15, height: 15, class: "clouds" },
     ];
     // cloud image placeholder
     const clouds = [
-        { type: 'img', width: 150, height: 70, class: "cloud-button", id: "cloud-button" }
+        { type: 'img', width: 150, height: 70, class: "cloud-button" }
     ];
     // cloud and star placeholder assets
     const goals = [
-        { type: 'img', width: 150, height: 70, class: "cloud-button", id: "cloud-button" },
-        { type: 'img', width: 50, height: 50, class: "star-button", id: "star-button" }
+        { type: 'img', width: 150, height: 70, class: "cloud-button" },
+        { type: 'img', width: 50, height: 50, class: "star-button" }
     ]
 
+    let finished = false;
+
     function placeImg() {
-        if (imgPoss.length < MAX_GOAL) {
-            console.log("spawning goal");
-            console.log(imgPoss.length);
-            const current = window.location.href;
-            
-            //taking the dimentions of cloud placeholder in list
-            const goalWidth = goals[0].width;
-            const goalHeight = goals[0].height;
+        // if page 4, only place fluff
+        if (finished) return;
 
-            //generate spawn coords
-            const r = Math.random;
-            const x = r() * (maxX - (goals[0].width));
-            const y = r() * (maxY - (goals[0].height));
+        if (window.location.href.endsWith('page-4.html') ||
+            window.location.href.endsWith('index.html')) {
+            while (imgPoss.length < (MAX_GOAL + MAX_CLOUDS + MAX_FLUFF)) {
+                console.log("spawning fluff");
+                console.log(imgPoss.length);
 
-            // isOverlap(x position, y position, cloud images width and height)
-            // will stop and retry if it overlaps with anything
-            if (isOverlap(x, y, goalWidth, goalHeight)) return;
+                const imgData = imgs[Math.floor(Math.random() * imgs.length)];
 
-            // using forEach to make sure it generates the cloud and the star
-            goals.forEach(imgData => {
-                // creates an image, appends to body, adds to list of positions
-                const img = document.createElement('img');
-                if (imgData.class) img.classList.add(imgData.class);
-                if (imgData.id) img.id = imgData.id;
+                const r = Math.random;
+                const x = r() * (maxX + imgData.width) - imgData.width;
+                const y = r() * (maxY + imgData.height) - imgData.height;
 
-                // ngl the class r2d2 already have position = absolute
-                // but the code came with these two so im keeping it i guess
-                img.classList.add('r2d2');
-                img.style.position = 'absolute';
+                if (!isOverlap(x, y, imgData.width, imgData.height)) {
+                    const img = document.createElement('img');
+                    img.src = imgData.src;
+                    img.classList.add('floating');
 
-                // chooses asset bsaed on which item in goals list, and what page is opened
-                if (imgData == goals[0]) {
-                    //random cloud
+                    img.classList.add(imgData.class);
+                    img.style.position = 'absolute';
+                    img.style.left = `${x}px`;
+                    img.style.top = `${y}px`;
+                    img.style.width = `${imgData.width}px`;
+                    img.style.height = `${imgData.height}px`;
+
+                    const randomDelay = Math.random() * -5; // 0–5s
+                    img.style.setProperty('--random-delay', `${randomDelay}s`);
+                    // img.style.setProperty('--hover-scale', '1'); // make sure scale is valid
+
+                    document.body.appendChild(img);
+                    imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
+
+                }
+            }
+            floatRandomizer();
+            finished = true;
+
+        } else {
+
+            if (imgPoss.length < MAX_GOAL) {
+                console.log("spawning goal");
+                console.log(imgPoss.length);
+                const current = window.location.href;
+
+                //taking the dimentions of cloud placeholder in list
+                const goalWidth = goals[0].width;
+                const goalHeight = goals[0].height;
+
+                //generate spawn coords
+                const r = Math.random;
+                const x = r() * (maxX - (goals[0].width));
+                const y = r() * (maxY - (goals[0].height));
+
+                // isOverlap(x position, y position, cloud images width and height)
+                // will stop and retry if it overlaps with anything
+                if (isOverlap(x, y, goalWidth, goalHeight)) return;
+
+                // using forEach to make sure it generates the cloud and the star
+                goals.forEach(imgData => {
+                    // creates an image, appends to body, adds to list of positions
+                    const img = document.createElement('img');
+                    if (imgData.class) img.classList.add(imgData.class);
+                    if (imgData.id) img.id = imgData.id;
+
+                    // img.classList.add('floater'); 
+
+                    img.style.position = 'absolute';
+
+                    // chooses asset bsaed on which item in goals list, and what page is opened
+                    if (imgData == goals[0]) {
+                        //random cloud
+                        const i = Math.floor(Math.random() * 2);
+                        if (i == 0) {
+                            img.src = "../images/cloud-b.png";
+                        } else if (i == 1) {
+                            img.src = "../images/cloud-f.png";
+                        }
+                        img.style.left = `${x}px`;
+                        img.style.top = `${y}px`;
+
+                        img.classList.add('floater');
+                    } else {
+                        // star depending on page
+                        if (current.endsWith('page-1.html')) {
+                            img.src = "../images/star-p.png";
+                        } else if (current.endsWith('page-2.html')) {
+                            img.src = "../images/star-b.png";
+                        } else if (current.endsWith('page-3.html')) {
+                            img.src = "../images/star-g.png";
+                        }
+                        // make the star be centered to its cloud
+                        img.style.left = `${x + (goals[0].width / 3)}px`;
+                        img.style.top = `${y + (goals[0].height / 3.5)}px`;
+
+                        img.classList.add('floater');
+                    }
+                    img.style.width = `${imgData.width}px`;
+                    img.style.height = `${imgData.height}px`;
+
+                    const randomDelay = Math.random() * -5; // 0–5s
+                    img.style.setProperty('--random-delay', `0`);
+                    // img.style.setProperty('--hover-scale', '1'); // make sure scale is valid
+
+                    document.body.appendChild(img);
+                    imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
+
+                });
+            }
+            // if the list of objects goes past 2, go onto spawning clouds
+            else if (imgPoss.length >= MAX_GOAL && imgPoss.length < MAX_GOAL + MAX_CLOUDS) {
+                console.log("spawning clouds");
+                console.log(imgPoss.length);
+
+                //random sprite picker
+                const imgData = clouds[Math.floor(Math.random() * clouds.length)];
+
+                const r = Math.random;
+                const x = r() * (maxX + imgData.width) - imgData.width;
+                const y = r() * (maxY + imgData.height) - imgData.height;
+
+                if (!isOverlap(x, y, imgData.width, imgData.height)) {
+                    const img = document.createElement('img');
+                    if (imgData.class) img.classList.add(imgData.class);
+                    if (imgData.id) img.id = imgData.id;
+
                     const i = Math.floor(Math.random() * 2);
                     if (i == 0) {
                         img.src = "../images/cloud-b.png";
                     } else if (i == 1) {
                         img.src = "../images/cloud-f.png";
                     }
+
+                    // img.classList.add('floating');
+                    img.style.position = 'absolute';
                     img.style.left = `${x}px`;
                     img.style.top = `${y}px`;
-                } else {
-                    // star depending on page
-                    if (current.endsWith('index.html')) {
-                        img.src = "../images/star-p.png";
-                    } else if (current.endsWith('page-2.html')) {
-                        img.src = "../images/star-b.png";
-                    } else if (current.endsWith('page-3.html')) {
-                        img.src = "../images/star-g.png";
-                    }
-                    // make the star be centered to its cloud
-                    img.style.left = `${x + (goals[0].width / 3)}px`;
-                    img.style.top = `${y + (goals[0].height / 3.5)}px`;
+                    img.style.width = `${imgData.width}px`;
+                    img.style.height = `${imgData.height}px`;
+
+                    const randomDelay = Math.random() * -5; // 0–5s
+                    img.style.setProperty('--random-delay', `${randomDelay}s`);
+                    // img.style.setProperty('--hover-scale', '1'); // make sure scale is valid
+
+                    document.body.appendChild(img);
+                    imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
+
                 }
-                img.style.width = `${imgData.width}px`;
-                img.style.height = `${imgData.height}px`;
-
-                document.body.appendChild(img);
-                imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
-            });
-        }
-        // if the list of objects goes past 2, go onto spawning clouds
-        else if (imgPoss.length >= MAX_GOAL && imgPoss.length < MAX_GOAL + MAX_CLOUDS) {
-            console.log("spawning clouds");
-            console.log(imgPoss.length);
-
-            //random sprite picker
-            const imgData = clouds[Math.floor(Math.random() * clouds.length)];
-
-            const r = Math.random;
-            const x = r() * (maxX + imgData.width) - imgData.width;
-            const y = r() * (maxY + imgData.height) - imgData.height;
-
-            if (!isOverlap(x, y, imgData.width, imgData.height)) {
-                const img = document.createElement('img');
-                if (imgData.class) img.classList.add(imgData.class);
-                if (imgData.id) img.id = imgData.id;
-
-                const i = Math.floor(Math.random() * 2);
-                if (i == 0) {
-                    img.src = "../images/cloud-b.png";
-                } else if (i == 1) {
-                    img.src = "../images/cloud-f.png";
-                }
-
-                img.classList.add('r2d2');
-                img.style.position = 'absolute';
-                img.style.left = `${x}px`;
-                img.style.top = `${y}px`;
-                img.style.width = `${imgData.width}px`;
-                img.style.height = `${imgData.height}px`;
-
-                document.body.appendChild(img);
-                imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
             }
-        }
-        // after reaching 2 + 15, spawn fluff
-        else if (imgPoss.length >= MAX_GOAL + MAX_CLOUDS && imgPoss.length < MAX_GOAL + MAX_CLOUDS + MAX_FLUFF) {
-            console.log("spawning fluff");
-            console.log(imgPoss.length);
-            if (imgPoss.length >= (MAX_GOAL + MAX_CLOUDS + MAX_FLUFF)) return;
+            // after reaching 2 + 15, spawn fluff
+            else if (imgPoss.length >= MAX_GOAL + MAX_CLOUDS && imgPoss.length < MAX_GOAL + MAX_CLOUDS + MAX_FLUFF) {
+                console.log("spawning fluff");
+                console.log(imgPoss.length);
+                if (imgPoss.length >= (MAX_GOAL + MAX_CLOUDS + MAX_FLUFF)) return;
 
-            const imgData = imgs[Math.floor(Math.random() * imgs.length)];
+                const imgData = imgs[Math.floor(Math.random() * imgs.length)];
 
-            const r = Math.random;
-            const x = r() * (maxX + imgData.width) - imgData.width;
-            const y = r() * (maxY + imgData.height) - imgData.height;
+                const r = Math.random;
+                const x = r() * (maxX + imgData.width) - imgData.width;
+                const y = r() * (maxY + imgData.height) - imgData.height;
 
-            if (!isOverlap(x, y, imgData.width, imgData.height)) {
-                const img = document.createElement('img');
-                img.src = imgData.src;
-                img.classList.add('r2d2');
-                img.style.position = 'absolute';
-                img.style.left = `${x}px`;
-                img.style.top = `${y}px`;
-                img.style.width = `${imgData.width}px`;
-                img.style.height = `${imgData.height}px`;
+                if (!isOverlap(x, y, imgData.width, imgData.height)) {
+                    const img = document.createElement('img');
+                    img.src = imgData.src;
+                    img.classList.add('floating');
 
-                document.body.appendChild(img);
-                imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
+                    img.style.position = 'absolute';
+                    img.style.left = `${x}px`;
+                    img.style.top = `${y}px`;
+                    img.style.width = `${imgData.width}px`;
+                    img.style.height = `${imgData.height}px`;
+
+                    const randomDelay = Math.random() * -5; // 0–5s
+                    img.style.setProperty('--random-delay', `${randomDelay}s`);
+                    // img.style.setProperty('--hover-scale', '1'); // make sure scale is valid
+
+                    document.body.appendChild(img);
+                    imgPoss.push({ x, y, width: imgData.width, height: imgData.height });
+
+                }
+            }
+            else if (imgPoss.length = MAX_GOAL + MAX_CLOUDS + MAX_FLUFF) {
+                console.log("done");
+                console.log("should be: ", MAX_GOAL + MAX_CLOUDS + MAX_FLUFF);
+                console.log("list length: ", imgPoss);
+
+                floatRandomizer();
+
+                finished = true;
             }
         }
     }
 
     function isOverlap(x, y, width, height) { // returns true if overlap
         // fake block in middle so that things dont spawn on top of middle text
-        const BLOCK_W = 500;
-        const BLOCK_H = 300;
+
+        let BLOCK_W;
+        let BLOCK_H;
+
+        if (window.location.href.endsWith('page-4.html')) {
+            BLOCK_W = 800;
+            BLOCK_H = 600;
+        } else {
+            BLOCK_W = 500;
+            BLOCK_H = 300;
+        }
+
         const block = {
             x: window.innerWidth / 2 - BLOCK_W / 2,
             y: window.innerHeight / 2 - BLOCK_H / 2,
@@ -235,14 +317,14 @@ window.addEventListener("DOMContentLoaded", () => {
             x + width > block.x &&
             y < block.y + block.height &&
             y + height > block.y
-        )  return true;
+        ) return true;
         // check overlap with each item on the item list
         const img = { x: width, y: height };
         for (const imgPos of imgPoss) {
             if (
-                x > imgPos.x - img.x && 
+                x > imgPos.x - img.x &&
                 x < imgPos.x + img.x &&
-                y > imgPos.y - img.y && 
+                y > imgPos.y - img.y &&
                 y < imgPos.y + img.y
             ) return true;
         }
@@ -262,6 +344,18 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+function floatRandomizer() {
+    const elements = document.querySelectorAll('.floating');
+
+    elements.forEach(el => {
+        // Generate a random delay between 0 and 4 seconds
+        const randomDelay = Math.random() * -5;
+        // Apply the random value as an inline CSS variable
+        el.style.setProperty('--random-delay', `${randomDelay}s`);
+    });
+};
+
+
 // on clicking a cloud, will add a class that makes it fade out
 // when done, hide cloud so that u can click stuff underneath it
 $(document).on("click", ".cloud-button", function () {
@@ -276,11 +370,17 @@ $(document).on("click", ".cloud-button", function () {
 $(document).on("click", ".star-button", function () {
     const current = window.location.href;
     if (current.endsWith('index.html')) {
+        console.log("directing to page 1")
+        window.location.href = 'page-1.html';
+
+    } else if (current.endsWith('page-1.html')) {
         console.log("directing to page 2")
         window.location.href = 'page-2.html';
+
     } else if (current.endsWith('page-2.html')) {
         console.log("directing to page 3")
         window.location.href = 'page-3.html';
+
     } else if (current.endsWith('page-3.html')) {
         console.log("directing to page 4")
         window.location.href = 'page-4.html';
@@ -289,10 +389,14 @@ $(document).on("click", ".star-button", function () {
 
 // on clicking the last page image, will bring u back to beginning
 // i like bringing it loop
-$(document).on("click", ".repeat", function () {
+$(document).on("click", ".end-image img", function () {
     const current = window.location.href;
-    if (current.endsWith('page-4.html')) {
-        console.log("directing to page 1")
+    if (current.endsWith('index.html')) {
+        console.log("directing to index")
+        window.location.href = 'page-1.html';
+    }
+    else if (current.endsWith('page-4.html')) {
+        console.log("directing to index")
         window.location.href = 'index.html';
     }
 });
