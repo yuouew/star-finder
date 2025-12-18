@@ -389,13 +389,17 @@ $(document).on("click", ".star-button", function () {
 
 // on clicking the last page image, will bring u back to beginning
 // i like bringing it loop
-$(document).on("click", ".end-image img", function () {
+$(document).on("click", ".nend-image img", function () {
     const current = window.location.href;
     if (current.endsWith('index.html')) {
         console.log("directing to index")
         window.location.href = 'page-1.html';
     }
-    else if (current.endsWith('page-4.html')) {
+});
+
+$(document).on("click", ".end-image img", function () {
+    const current = window.location.href;
+    if (current.endsWith('page-4.html')) {
         console.log("directing to index")
         window.location.href = 'index.html';
     }
